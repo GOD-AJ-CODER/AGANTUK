@@ -126,7 +126,7 @@ npm run dev
 * **Current Status:** Fully working image quality gating, math checks, photo forensics, SQLite database, secure hashing, and Next.js frontend.
 
 
-* **Future Work:** Hooking up physical USB passport scanners directly to the app, and syncing data between local laptops over a wireless mesh network when the internet is completely down.
+* **Future Work:** Hooking up physical USB passport scanners directly to the app, and syncing data between local laptops over a wireless mesh network when the internet is completely down.FingerPrint checking of each officer so he don't have to enter his or her officer id everytime to log into the system, Auth system is to be build so that the admin can add or remove fingerprint and entries of each officer and check out log of them...
 
 ```
 
