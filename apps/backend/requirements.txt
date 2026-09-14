@@ -1,0 +1,32 @@
+# Border Verification Engine — Python Backend
+# Phase 1 dependencies
+#
+# Environment: Python 3.14.x (system-installed packages on dev machine)
+# Note: pydantic-core wheel must be pre-built for the target Python version.
+#       Use --no-build-isolation or pre-install system packages if CI fails.
+
+# ── Web Framework ─────────────────────────────────────────────────────────────
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+
+# ── Pydantic v2 + settings ────────────────────────────────────────────────────
+pydantic>=2.10.0
+pydantic-settings>=2.6.0
+
+# ── Authentication & JWT ──────────────────────────────────────────────────────
+PyJWT>=2.9.0
+
+# ── Phase 2: Ingestion & Pre-Processing ──────────────────────────────────────
+opencv-python-headless>=4.10.0
+numpy>=2.0.0
+Pillow>=11.0.0
+python-multipart>=0.0.9
+# scipy>=1.14.0 (Phase 4 forensics)
+
+# ── Phase 3 (add when starting Phase 3) ──────────────────────────────────────
+# ultralytics>=8.3.0       # YOLOv8
+# paddleocr>=2.9.0
+# onnxruntime>=1.20.0
+
+# ── Phase 5 (add when starting Phase 5) ──────────────────────────────────────
+# powersync-python (or JS SDK — see architecture.md)

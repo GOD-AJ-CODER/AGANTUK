@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-workspace: #F4F6F8;
+    --navy-header: #0F172A;
+    --card-bg: #FFFFFF;
+    --border-clean: #CBD5E1;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --tactical-pass: #16A34A;
+    --tactical-warn: #D97706;
+    --tactical-flag: #DC2626;
+    --tactical-highlight: #0284C7;
+  }
+
+  body {
+    background-color: var(--bg-workspace);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: 0.01em;
+    min-height: 100vh;
+    margin: 0;
+    overflow-x: hidden;
+    user-select: none;
+  }
+
+  /* Monospace with slashed zeros */
+  code, pre, .font-mono, .data-value {
+    font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", "Fira Code", Menlo, Monaco, Consolas, monospace;
+    font-feature-settings: "zero" 1, "ss01" 1;
+    font-variant-numeric: slashed-zero tabular-nums;
+  }
+}
+
+/* Tactical strobe animation for CRITICAL_SECURITY_ALERT */
+@keyframes tactical-strobe {
+  0%, 100% {
+    box-shadow: 0 0 0 4px #DC2626;
+    border-color: #DC2626;
+  }
+  50% {
+    box-shadow: 0 0 35px 8px #DC2626;
+    border-color: #FFFFFF;
+  }
+}
+
+.animate-tactical-strobe {
+  animation: tactical-strobe 0.8s infinite;
+}
+
+/* Touch targets: minimum 48px, standard 64px */
+.touch-target-sm {
+  min-height: 48px;
+  min-width: 48px;
+}
+
+.touch-target {
+  min-height: 64px;
+}
+
