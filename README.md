@@ -18,6 +18,7 @@
 **Our Solution:** AGANTUK removes the guesswork. We replace human mood with a strict, automated safety net. Running 100% offline on standard laptops, it mathematically processes all those variables in milliseconds, catching fakes instantly and giving the officer a clear, foolproof verdict.
 
 ---
+<img width="1848" height="931" alt="Screenshot From 2026-09-14 15-48-02" src="https://github.com/user-attachments/assets/9653eae7-aa89-4253-82db-0d09b09cbb09" />
 
 ## ⚡ Core Features
 
@@ -48,6 +49,9 @@
 | **Corrupt Officers / Bribery** | **Secure Audit Log:** Every scan writes a permanent, SHA-256 hashed log. Nobody can alter the history to cover their tracks.
 
  |
+
+<img width="1848" height="931" alt="Screenshot From 2026-09-14 15-47-31" src="https://github.com/user-attachments/assets/05714958-43ac-4317-9459-7cf4e18ac683" />
+
 
 ---
 
@@ -119,6 +123,7 @@ npm run dev
 
 *Open `http://localhost:3000/scan` in your browser.*
 
+<img width="1848" height="931" alt="Screenshot From 2026-09-14 15-47-20" src="https://github.com/user-attachments/assets/f068fbc2-9a34-4c37-95c9-a6f11536830e" />
 ---
 
 ## 🗺️ What's Next?
