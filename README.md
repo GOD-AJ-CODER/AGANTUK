@@ -7,92 +7,89 @@
 [![Operation](https://img.shields.io/badge/Operation-100%25%20Offline%20Edge-informational?style=flat)]()
 
 
+---
 
-## 📌 Problem Statement & Operational Context
+## 📌 Problem Statement
 
 **Smart India Hackathon (SIH) | PS ID: 26188 | Ministry of Home Affairs & SSB**
 
-Frontline border checkpoints operate in grueling, low-bandwidth environments where proprietary, cloud-dependent verification systems fail. Furthermore, physical security is highly vulnerable to human cognitive fatigue; exhausted officers working 12-hour shifts can miss subtle photo-splices or forged expiration dates.
+**The Current Reality:** Right now, a traveler hands over their ID, and an officer has to manually juggle a dozen variables in their head under intense pressure—checking expiry dates, spotting tampered photos, and scanning for fake text. The final security decision relies entirely on the subjective judgment, mood, and fatigue of an exhausted officer working a 12-hour shift.
 
-**AGANTUK** replaces subjective human inspection with a deterministic, zero-discretion verification pipeline. It executes 100% locally on commodity edge hardware, mathematically validating travel credentials and completely eliminating single-point human failure.
+**Our Solution:** AGANTUK removes the guesswork. We replace human mood with a strict, automated safety net. Running 100% offline on standard laptops, it mathematically processes all those variables in milliseconds, catching fakes instantly and giving the officer a clear, foolproof verdict.
 
 ---
 
-## ⚡ Core Architectural USPs
+## ⚡ Core Features
 
-* **Zero Proprietary Licensing:** Built entirely on open standards (ICAO Doc 9303, ISO/IEC 7810, OpenCV, FastAPI, SQLite) rather than expensive, locked-in vendor SDKs.
-
-
-* **Fail-Closed Security Design:** If an anomaly is detected, the system forces a structured override justification or triggers a complete terminal lockout—officers cannot silently wave through flagged documents.
-
-
-* **<1,500ms Edge Latency:** The entire computer vision, forensics, and cryptographic pipeline executes in under 1.5 seconds without a single cloud API call.
+* **Eliminating Expensive Licensing:** We dropped the overpriced vendor APIs. This is built entirely on open-source tools (OpenCV, FastAPI, SQLite) and open standards (ICAO Doc 9303).
+* **No Silent Failures:** If a passport is flagged, an officer can't just click "ignore" to clear the queue. The system forces them to type a justification, or locks them out completely for severe threats.
+* **Super Fast Offline Processing:** The entire computer vision, math, and database pipeline runs in under 1.5 seconds without making a single internet request.
 
 
 
 ---
 
-## 🛡️ Threat Model & Attack Vector Mitigation
+## 🛡️ How We Catch Fakes (Threat Model)
 
-| Attack Vector | AGANTUK Mitigation Engine |
+| What Forgers Try | How AGANTUK Catches It |
 | --- | --- |
-| **Photo Swapping / Splicing** | **Error Level Analysis (ELA):** Detects variance ratio anomalies ($>15.0$) between the photo tile and document substrate.
+| **Fake or Swapped Photos** | **Error Level Analysis (ELA):** Detects if the photo was copy-pasted by comparing compression noise against the background.
 
  |
-| **Altered Expiry / Doc Number** | **Cryptographic Math:** Validates ICAO 9303 Modulo-10 $[7, 3, 1]$ checksums and Modulo-37 alphanumeric cross-references.
+| **Forged Dates or ID Numbers** | **Math Checksums:** Validates standard Modulo-10 `[7, 3, 1]` math formulas. If a number was changed, the math breaks.
 
  |
-| **Credential Sharing (Pass-back)** | **Temporal Guardrail:** SQLite Write-Ahead Logging blocks duplicate document scans within a rolling 15-minute window.
+| **Same Passport Scanned Twice** | **15-Minute Cooldown:** Our local SQLite database automatically blocks duplicate document scans within a 15-minute window.
 
  |
-| **Digital Manipulation / Cloning** | **PRNU & Quantization:** Analyzes Photo-Response Non-Uniformity noise and JPEG double-compression tables.
+| **Photoshop & Digital Edits** | **Noise Analysis:** Scans for hidden digital artifacts and re-compression traces.
 
  |
-| **Operator Collusion** | **Cryptographic Non-Repudiation:** Every verdict writes an immutable SHA-256 hashed ledger entry.
+| **Corrupt Officers / Bribery** | **Secure Audit Log:** Every scan writes a permanent, SHA-256 hashed log. Nobody can alter the history to cover their tracks.
 
  |
 
 ---
 
-## 🏛️ Multi-Layer Pipeline Architecture
+## 🏛️ How the Code Works
 
 ```text
-[ Document Image Ingest ]
+[ Upload Document Image ]
            │
            ▼
-[ 1. Physical Quality Gate ] ──(Blur / Glare / Tilt)──► [ HTTP 400: "Hold Steady" ]
+[ 1. Image Quality Check ] ────(Blur / Glare / Bad Angle)──► [ HTTP 400: "Hold Steady" ]
            │
            ▼
-[ 2. Anti-Spoofing Forensics ] ──(ELA / PRNU / Ratio flags)──┐
-           │                                                 │
-           ▼                                                 │
-[ 3. ICAO 9303 Math Engine ] ──(Mod-10/37 fail)──────────────┼──► [ Collect All Failure Codes ]
-           │                                                 │                  │
-           ▼                                                 │                  │
-[ 4. Anti-Fraud & Watchlist ] ──(Pass-back / Blacklist)──────┘                  ▼
-           │                                                       [ Verdict Precedence Engine ]
-           ▼                                                       (CRITICAL > FLAGGED > WARN > PASS)
-[ 5. Cryptographic Ledger ]                                                     │
-     SHA-256 Canonical Hash ──► Dual-Write: SQLite WAL + audit_trail.jsonl ◄────┘
+[ 2. Forensics Engine ] ───────(Photo Splice / Edits)──┐
+           │                                           │
+           ▼                                           │
+[ 3. ICAO Math Engine ] ───────(Math / Checksum fail)──┼──► [ Collect All Errors ]
+           │                                           │             │
+           ▼                                           │             │
+[ 4. Local Watchlist ] ────────(Pass-back / Blacklist)─┘             ▼
+           │                                                [ Final Verdict ]
+           ▼                                        (CRITICAL > FLAGGED > WARN > PASS)
+[ 5. Secure Audit Log ]                                              │
+     SHA-256 Hashed ─────────► Saved to SQLite & audit_trail.jsonl ◄─┘
 
 ```
 
 ---
 
-## 🧪 99-Test Proof of Reliability
+## 🧪 99 Automated Tests
 
-The AGANTUK codebase is hardened by 99 passing unit and integration tests across 4 dedicated suites, proving edge-case resilience:
+This isn't just a prototype. We wrote 99 automated tests across 4 suites to prove it handles real edge-cases reliably:
 
-* **Stage 1 (7 Tests):** Motion blur (`σ² < 100.0`), document tilt ($>45^\circ$), HSV specular glare rejection.
-
-
-* **Stage 3 (5 Tests):** TD1/TD2/TD3 MRZ parsers and Visual Inspection Zone (VIZ) mismatch detection.
+* **Stage 1 (7 Tests):** Drops blurry images, bad angles, and heavy camera glare.
 
 
-* **Stage 4 (63 Tests):** Modulo math engines, ELA variance, pass-back protection, chronological contradictions, and verdict hierarchy resolution.
+* **Stage 3 (5 Tests):** Parses standard IDs/Passports and flags if the printed name doesn't match the machine-readable text.
 
 
-* **Stage 5 (24 Tests):** SHA-256 audit hashing determinism, tamper detection, and corrupted buffer sanitization.
+* **Stage 4 (63 Tests):** Tests the math engines, pass-back protection, and logical flaws (like a passport issued *before* the person was born).
+
+
+* **Stage 5 (24 Tests):** Proves the SHA-256 audit logs cannot be tampered with.
 
 
 
@@ -100,7 +97,7 @@ The AGANTUK codebase is hardened by 99 passing unit and integration tests across
 
 ## 🚀 Local Quickstart
 
-**Backend Edge Node (FastAPI):**
+**1. Run the Backend (FastAPI):**
 
 ```bash
 cd apps/backend
@@ -111,7 +108,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 ```
 
-**Frontend Tactical Console (Next.js):**
+**2. Run the Frontend (Next.js):**
 
 ```bash
 cd apps/frontend
@@ -120,16 +117,16 @@ npm run dev
 
 ```
 
-Access the inspection console at `http://localhost:3000/scan`.
+*Open `http://localhost:3000/scan` in your browser.*
 
 ---
 
-## 🗺️ Scope & Roadmap
+## 🗺️ What's Next?
 
-* **Current Baseline:** Full OpenCV gating, ICAO Mod-10/37 math, ELA/PRNU forensics, SQLite WAL, SHA-256 non-repudiation ledger, and high-contrast tactical UI.
+* **Current Status:** Fully working image quality gating, math checks, photo forensics, SQLite database, secure hashing, and Next.js frontend.
 
 
-* **Future Work:** Direct USB-HID passport hardware scanner integration, peer-to-peer mesh synchronization between checkpoint booths during WAN outages.
+* **Future Work:** Hooking up physical USB passport scanners directly to the app, and syncing data between local laptops over a wireless mesh network when the internet is completely down.
 
 ```
 
